@@ -47,6 +47,21 @@ def num_stars(bot, update):
                           chat_id=query.message.chat_id,
                           message_id=query.message.message_id)
 
+def save_parameters(bot, update):
+    query = update.callback_query
+
+    bot.edit_message_text(text='Отлично! Теперь я смогу подобрать для тебя хорошие варианты проживания. Поробуем?',
+                          reply_markup=keyboards.GO_TRAVEL_KB,
+                          chat_id=query.message.chat_id,
+                          message_id=query.message.message_id)
+
+def go_travel(bot, update):
+    query = update.callback_query
+
+    bot.edit_message_text(text='Отлично! Куда и когда ты собираешься в следующий раз? Напиши мне город и дату.',
+                          chat_id=query.message.chat_id,
+                          message_id=query.message.message_id)
+
 
 def back_to_main(bot, update):
     query = update.callback_query
@@ -78,6 +93,8 @@ if __name__ == '__main__':
     dispatcher.add_handler(CallbackQueryHandler(back_to_main, pattern='back_to_main'))
     dispatcher.add_handler(CallbackQueryHandler(quality_of_hotel, pattern='(th1)|(th2)|(th3)|(th4)|(th5)|(th6)|(th7)|(th8)|(th9)|(th10)|(th11)|(th0)'))
     dispatcher.add_handler(CallbackQueryHandler(num_stars, pattern='(qh60)|(qh70)|(qh80)|(qh90)|(qh0)'))
+    dispatcher.add_handler(CallbackQueryHandler(save_parameters, pattern='(ns1)|(ns2)|(ns3)|(ns4)|(ns5)|(ns0)'))
+    dispatcher.add_handler(CallbackQueryHandler(go_travel, pattern='go_travel'))
 
     dispatcher.add_handler(CommandHandler('help', help))
     dispatcher.add_error_handler(error)

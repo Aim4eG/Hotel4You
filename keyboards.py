@@ -45,3 +45,7 @@ NUM_STARS_KB = InlineKeyboardMarkup([[InlineKeyboardButton('1 звезда', cal
                                       InlineKeyboardButton('Не важно', callback_data='ns0')],
                                      [InlineKeyboardButton('Назад', callback_data='th0')]
                                      ])
+
+GO_TRAVEL_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Да', callback_data='go_travel'),
+                                      InlineKeyboardButton('Нет', callback_data='back_to_main')]
+                                     ])
