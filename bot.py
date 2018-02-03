@@ -6,6 +6,8 @@ from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, Filters,
 import config
 import keyboards
 
+import search_city
+
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
 
@@ -31,7 +33,12 @@ def text_message_handler(bot, update, chat_data):
 
     elif chat_data['message_type'] == 'go_travel':
         bot.send_message(update.message.chat_id,
-                         text='Пожалуйста подождите, ищем город в базе данных...')
+                         text='Пожалуйста, подождите, ищем город в базе данных...')
+        chat_data['city'] = search_city(update.message.text)
+        if chat_data['city'] == 'error':
+            bot.send_message(update.message.chat_id,
+                             text='Город не найден. Возможно, вы ошиблись в названии. Попробуйте ввести его еще раз;)')
+
 
         # Reading and using database of cities...
 
