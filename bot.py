@@ -33,11 +33,21 @@ def text_message_handler(bot, update, chat_data):
 
     elif chat_data['message_type'] == 'go_travel':
         bot.send_message(update.message.chat_id,
-                         text='Пожалуйста, подождите, ищем город в базе данных...')
-        chat_data['city'] = search_city(update.message.text)
+                         text='Ищем город в базе данных...')
+        res = search_city.str_split(update.message.text)
+        print(res)
+        if res == 'error':
+            bot.send_message(update.message.chat_id,
+                             text='Возможно, вы ошиблись в написании запроса. Попробуйте ввести его еще раз;)')
+        chat_data['city'] = search_city.search_city(res[0])
         if chat_data['city'] == 'error':
             bot.send_message(update.message.chat_id,
                              text='Город не найден. Возможно, вы ошиблись в названии. Попробуйте ввести его еще раз;)')
+        else:
+            chat_data['city'] = 'city=' + chat_data['city']
+            bot.send_message(update.message.chat_id,
+                         text=chat_data['city'])
+            #ПАРСИНГ
 
 
         # Reading and using database of cities...
@@ -71,7 +81,7 @@ def num_stars(bot, update):
 def save_parameters(bot, update):
     query = update.callback_query
 
-    bot.edit_message_text(text='Отлично! Теперь я смогу подобрать для тебя хорошие варианты проживания. Поробуем?',
+    bot.edit_message_text(text='Отлично! Теперь я смогу подобрать для тебя хорошие варианты проживания. Попробуем?',
                           reply_markup=keyboards.GO_TRAVEL_KB,
                           chat_id=query.message.chat_id,
                           message_id=query.message.message_id)
@@ -79,7 +89,9 @@ def save_parameters(bot, update):
 def go_travel(bot, update, chat_data):
     query = update.callback_query
 
-    bot.edit_message_text(text='Отлично! Куда и когда ты собираешься в следующий раз? Напиши мне город и дату.',
+    bot.edit_message_text(text='Отлично! Куда и когда ты собираешься в следующий раз? Напиши мне город и дату.\n'
+                                'Пожалуйста, не забудь указать дату выезда:)\n'
+                          'Например: Рим, 18 марта - 21 марта', # ВОТ ТУТ НАДО ОПИСАТЬ ВОЗМОЖНЫЕ ВАРИАНТЫ ВВОДА
                           chat_id=query.message.chat_id,
                           message_id=query.message.message_id)
     chat_data['message_type'] = 'go_travel'

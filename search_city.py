@@ -11,6 +11,21 @@ def search_city(city):
             #print(city_id)
     return 'error'
 
+def str_split(str):
+    try:
+        res = []
+        str = str.replace(' ', '')
+        temp = str.split(',', maxsplit=1)
+        res.append(temp[0])
+        res.append(temp[1].split('-', maxsplit=1)[0])
+        res.append(temp[1].split('-', maxsplit=1)[1])
+        return res
+    except IndexError:
+        return 'error'
+
+
+
+
 
 
 
