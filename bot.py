@@ -34,8 +34,9 @@ def text_message_handler(bot, update, chat_data):
     elif chat_data['message_type'] == 'go_travel':
         bot.send_message(update.message.chat_id,
                          text='Ищем город в базе данных...')
+
         res = search_city.str_split(update.message.text)
-        print(res)
+
         if res == 'error':
             bot.send_message(update.message.chat_id,
                              text='Возможно, вы ошиблись в написании запроса. Попробуйте ввести его еще раз;)')
@@ -45,15 +46,15 @@ def text_message_handler(bot, update, chat_data):
                              text='Город не найден. Возможно, вы ошиблись в названии. Попробуйте ввести его еще раз;)')
         else:
             chat_data['city'] = 'city=' + chat_data['city']
+
+            print(chat_data)
+
             bot.send_message(update.message.chat_id,
-                         text=chat_data['city'])
+                             text=chat_data['city'])
             #ПАРСИНГ
 
 
-        # Reading and using database of cities...
-
-
-def type_of_hotel(bot, update):
+def type_of_hotel(bot, update, chat_data):
     query = update.callback_query
 
     bot.edit_message_text(text='Отлично! Где ты предпочитаешь останавливаться? Выбери один из возможных вариантов ниже:',
@@ -61,16 +62,54 @@ def type_of_hotel(bot, update):
                           chat_id=query.message.chat_id,
                           message_id=query.message.message_id)
 
-def quality_of_hotel(bot, update):
+
+def quality_of_hotel(bot, update, chat_data):
     query = update.callback_query
+
+    if query.data == 'th1':
+        chat_data['hotel'] = 'ht_id%253D204%253B'
+    elif query.data == 'th2':
+        chat_data['hotel'] = 'ht_id%253D218%253B'
+    elif query.data == 'th3':
+        chat_data['hotel'] = 'ht_id%253D221%253B'
+    elif query.data == 'th4':
+        chat_data['hotel'] = 'ht_id%253D223%253B'
+    elif query.data == 'th5':
+        chat_data['hotel'] = 'ht_id%253D203%253B'
+    elif query.data == 'th6':
+        chat_data['hotel'] = 'ht_id%253D201%253B'
+    elif query.data == 'th7':
+        chat_data['hotel'] = 'ht_id%253D216%253B'
+    elif query.data == 'th8':
+        chat_data['hotel'] = 'ht_id%253D215%253B'
+    elif query.data == 'th9':
+        chat_data['hotel'] = 'ht_id%253D206%253B'
+    elif query.data == 'th10':
+        chat_data['hotel'] = 'ht_id%253D220%253B'
+    elif query.data == 'th11':
+        chat_data['hotel'] = 'ht_id%253D208%253B'
+    elif query.data == 'th0':
+        chat_data['hotel'] = ''
 
     bot.edit_message_text(text='Какой рейтинг должен быть у отеля? Выбери один из возможных вариантов ниже:',
                           reply_markup=keyboards.QUALITY_HOTEL_KB,
                           chat_id=query.message.chat_id,
                           message_id=query.message.message_id)
 
-def num_stars(bot, update):
+
+def num_stars(bot, update, chat_data):
     query = update.callback_query
+
+    if query.data == 'qh60':
+        chat_data['quality'] = 'review_score%253D60%253B'
+    elif query.data == 'qh70':
+        chat_data['quality'] = 'review_score%253D70%253B'
+    elif query.data == 'qh80':
+        chat_data['quality'] = 'review_score%253D80%253B'
+    elif query.data == 'qh90':
+        chat_data['quality'] = 'review_score%253D90%253B'
+    elif query.data == 'qh0':
+        chat_data['quality'] = ''
 
     bot.edit_message_text(text='А сколько звезд? Выбери один из возможных вариантов ниже:',
                           reply_markup=keyboards.NUM_STARS_KB,
@@ -78,13 +117,27 @@ def num_stars(bot, update):
                           message_id=query.message.message_id)
 
 
-def save_parameters(bot, update):
+def save_parameters(bot, update, chat_data):
     query = update.callback_query
+
+    if query.data == 'ns1':
+        chat_data['stars'] = 'class%253D1%253B'
+    elif query.data == 'ns2':
+        chat_data['stars'] = 'class%253D2%253B'
+    elif query.data == 'ns3':
+        chat_data['stars'] = 'class%253D3%253B'
+    elif query.data == 'ns4':
+        chat_data['stars'] = 'class%253D4%253B'
+    elif query.data == 'ns5':
+        chat_data['stars'] = 'class%253D5%253B'
+    elif query.data == 'ns0':
+        chat_data['stars'] = ''
 
     bot.edit_message_text(text='Отлично! Теперь я смогу подобрать для тебя хорошие варианты проживания. Попробуем?',
                           reply_markup=keyboards.GO_TRAVEL_KB,
                           chat_id=query.message.chat_id,
                           message_id=query.message.message_id)
+
 
 def go_travel(bot, update, chat_data):
     query = update.callback_query
@@ -112,6 +165,7 @@ def help(bot, update):
     update.message.reply_text('Наш бот поможет найти лучшие места для отдыха!:)')
     update.message.reply_text('Наберите /start, чтобы начать')
 
+
 def error(bot, update, error):
     logging.warning('Update {} caused error {}'.format(update, error))
 
@@ -126,11 +180,11 @@ if __name__ == '__main__':
 
     dispatcher.add_handler(MessageHandler(Filters.text, text_message_handler, pass_chat_data=True))
 
-    dispatcher.add_handler(CallbackQueryHandler(type_of_hotel, pattern='type_of_hotel'))
+    dispatcher.add_handler(CallbackQueryHandler(type_of_hotel, pattern='type_of_hotel', pass_chat_data=True))
     dispatcher.add_handler(CallbackQueryHandler(back_to_main, pattern='back_to_main'))
-    dispatcher.add_handler(CallbackQueryHandler(quality_of_hotel, pattern='(th1)|(th2)|(th3)|(th4)|(th5)|(th6)|(th7)|(th8)|(th9)|(th10)|(th11)|(th0)'))
-    dispatcher.add_handler(CallbackQueryHandler(num_stars, pattern='(qh60)|(qh70)|(qh80)|(qh90)|(qh0)'))
-    dispatcher.add_handler(CallbackQueryHandler(save_parameters, pattern='(ns1)|(ns2)|(ns3)|(ns4)|(ns5)|(ns0)'))
+    dispatcher.add_handler(CallbackQueryHandler(quality_of_hotel, pattern='(th1)|(th2)|(th3)|(th4)|(th5)|(th6)|(th7)|(th8)|(th9)|(th10)|(th11)|(th0)', pass_chat_data=True))
+    dispatcher.add_handler(CallbackQueryHandler(num_stars, pattern='(qh60)|(qh70)|(qh80)|(qh90)|(qh0)', pass_chat_data=True))
+    dispatcher.add_handler(CallbackQueryHandler(save_parameters, pattern='(ns1)|(ns2)|(ns3)|(ns4)|(ns5)|(ns0)', pass_chat_data=True))
     dispatcher.add_handler(CallbackQueryHandler(go_travel, pattern='go_travel', pass_chat_data=True))
 
     updater.start_polling()
