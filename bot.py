@@ -5,6 +5,7 @@ from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, Filters,
 
 import config
 import keyboards
+import get_date
 
 import search_city
 
@@ -51,11 +52,11 @@ def text_message_handler(bot, update, chat_data):
 
             bot.send_message(update.message.chat_id,
                              text=chat_data['city'])
-            #ПАРСИНГ
-            res = query(chat_data)
-            bot.send_message(update.message.chat_id,
-                             text= 'Готово! Пройди по ссылке с подходящими вариантами: \n' + res)
-
+            check_in=parse_date(res[1])
+            check_out=parse_date(res[2])
+            if (check_in[0]=='error' | check_out[0]=='error'):
+                bot.send_message(update.message.chat_id,
+                                 text='Возможно, вы ошиблись в написании запроса. Попробуйте ввести его еще раз;)')
 
 
 def type_of_hotel(bot, update, chat_data):
@@ -148,7 +149,9 @@ def go_travel(bot, update, chat_data):
 
     bot.edit_message_text(text='Отлично! Куда и когда ты собираешься в следующий раз? Напиши мне город и дату.\n'
                                 'Пожалуйста, не забудь указать дату выезда:)\n'
-                          'Например: Рим, 18 марта - 21 марта', # ВОТ ТУТ НАДО ОПИСАТЬ ВОЗМОЖНЫЕ ВАРИАНТЫ ВВОДА
+                          'Например: Рим, 18 марта - 21 марта, \n'
+                          'Москва, 12.06.2018 - 15.06.2018,\n'
+                          'Неаполь, 2 апр. - 4 апр.\n',
                           chat_id=query.message.chat_id,
                           message_id=query.message.message_id)
     chat_data['message_type'] = 'go_travel'
