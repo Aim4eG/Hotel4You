@@ -23,6 +23,11 @@ def str_split(str):
     except IndexError:
         return 'error'
 
+def query(chat_data): #www.booking.com/searchresults.ru.html?<теги для поиска>
+    res = 'www.booking.com/searchresults.ru.html?' + chat_data['city'] + '&' + chat_data['date1'] + \
+          '&' + chat_data['date2'] + '&' + chat_data['hotel'] + '&' + chat_data['quality'] + '&' + chat_data['stars']
+    return res
+
 
 
 

@@ -52,6 +52,10 @@ def text_message_handler(bot, update, chat_data):
             bot.send_message(update.message.chat_id,
                              text=chat_data['city'])
             #ПАРСИНГ
+            res = query(chat_data)
+            bot.send_message(update.message.chat_id,
+                             text= 'Готово! Пройди по ссылке с подходящими вариантами: \n' + res)
+
 
 
 def type_of_hotel(bot, update, chat_data):
