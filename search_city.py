@@ -27,25 +27,15 @@ def str_split(str):
 
 
 def query(chat_data): #www.booking.com/searchresults.ru.html?<теги для поиска>
+    if chat_data['hotel'] == '' and chat_data['quality'] == '' and chat_data['stars'] == '':
+        res = 'www.booking.com/searchresults.ru.html?' + chat_data['city'] + '&aid=1433748&' + \
+              chat_data['date_in'] + '&' + chat_data['date_out'] + '&no_rooms=1&group_adults=2'
+        return res
+
     res = 'www.booking.com/searchresults.ru.html?' + chat_data['city'] + '&nflt=' + chat_data['hotel'] + \
           chat_data['quality'] + chat_data['stars'] + '&aid=1433748&' + chat_data['date_in'] + '&' + \
-          chat_data['date_out']
+          chat_data['date_out'] + '&no_rooms=1&group_adults=2'
     return res
-
-
-    #par=['city': chat_data['city'],
-     #   '': chat_data['date1']
-
-    #'nflt' = > urlencode($prefersString),
-    #'aid' = > BOOKING_AFFILIATE_ID,
-    #'checkin_monthday' = > $dateIn->format('j'),
-    #'checkin_month' = > $dateIn->format('n'),
-    #'checkin_year' = > $dateIn->format('Y'),
-    #'checkout_monthday' = > $dateOut->format('j'),
-    #'checkout_month' = > $dateOut->format('n'),
-    #'checkout_year' = > $dateOut->format('Y'),
-    #'no_rooms' = > 1,
-    #'group_adults' = > 1 ]
 
 
 
