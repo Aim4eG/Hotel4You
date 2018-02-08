@@ -20,6 +20,7 @@ def start_greeting(bot, update, chat_data):
 
     chat_data['message_type'] = 'start_description'
 
+
 def text_message_handler(bot, update, chat_data):
     if chat_data['message_type'] == 'start_description':
         bot.send_message(update.message.chat_id,
@@ -34,29 +35,38 @@ def text_message_handler(bot, update, chat_data):
 
     elif chat_data['message_type'] == 'go_travel':
         bot.send_message(update.message.chat_id,
-                         text='Ищем город в базе данных...')
+                         text='Ищем город в базе данных и проверяем правильность введенной даты...')
 
         res = search_city.str_split(update.message.text)
 
         if res == 'error':
             bot.send_message(update.message.chat_id,
                              text='Возможно, вы ошиблись в написании запроса. Попробуйте ввести его еще раз;)')
+            return
+
         chat_data['city'] = search_city.search_city(res[0])
+
         if chat_data['city'] == 'error':
             bot.send_message(update.message.chat_id,
                              text='Город не найден. Возможно, вы ошиблись в названии. Попробуйте ввести его еще раз;)')
-        else:
-            chat_data['city'] = 'city=' + chat_data['city']
+            return
 
-            print(chat_data)
+        chat_data['city'] = 'city=' + chat_data['city']
 
+        check_in = get_date.parse_date(res[1])
+        check_out = get_date.parse_date(res[2])
+
+        if check_in[0] == 'error' or check_out[0] == 'error':
             bot.send_message(update.message.chat_id,
-                             text=chat_data['city'])
-            check_in=parse_date(res[1])
-            check_out=parse_date(res[2])
-            if (check_in[0]=='error' | check_out[0]=='error'):
-                bot.send_message(update.message.chat_id,
-                                 text='Возможно, вы ошиблись в написании запроса. Попробуйте ввести его еще раз;)')
+                             text='Не смогли распознать дату. Возможно, вы ошиблись в написании запроса. Попробуйте ввести его еще раз;)')
+            return
+
+        chat_data['date_in'] = 'checkin_monthday=' + check_in[0] + '&checkin_month=' + check_in[1] + '&checkin_year=' + check_in[2]
+        chat_data['date_out'] = 'checkout_monthday=' + check_out[0] + '&checkout_month=' + check_out[1] + '&checkout_year=' + check_out[2]
+
+        ref = search_city.query(chat_data)
+        bot.send_message(update.message.chat_id,
+                         text='Готово! Пройди по ссылке с подходящими вариантами: \n' + ref)
 
 
 def type_of_hotel(bot, update, chat_data):

@@ -2,15 +2,16 @@ import xlrd
 import xlwt
 import urllib
 
+
 def search_city(city):
-    rb =xlrd.open_workbook('./cities.xlsx')
+    rb = xlrd.open_workbook('./cities.xlsx')
     sheet = rb.sheet_by_index(0)
-    for rownum in range(sheet.nrows):
-        row = sheet.row_values(rownum)
+    for row_num in range(sheet.nrows):
+        row = sheet.row_values(row_num)
         if row[1] == city:
             return row[3]
-            #print(city_id)
     return 'error'
+
 
 def str_split(str):
     try:
@@ -24,7 +25,14 @@ def str_split(str):
     except IndexError:
         return 'error'
 
+
 def query(chat_data): #www.booking.com/searchresults.ru.html?<теги для поиска>
+    res = 'www.booking.com/searchresults.ru.html?' + chat_data['city'] + '&nflt=' + chat_data['hotel'] + \
+          chat_data['quality'] + chat_data['stars'] + '&aid=1433748&' + chat_data['date_in'] + '&' + \
+          chat_data['date_out']
+    return res
+
+
     #par=['city': chat_data['city'],
      #   '': chat_data['date1']
 
@@ -38,10 +46,6 @@ def query(chat_data): #www.booking.com/searchresults.ru.html?<теги для п
     #'checkout_year' = > $dateOut->format('Y'),
     #'no_rooms' = > 1,
     #'group_adults' = > 1 ]
-    res = 'www.booking.com/searchresults.ru.html?' + chat_data['city'] + '&' + chat_data['date1'] + \
-          '&' + chat_data['date2'] + '&' + chat_data['hotel'] + '&' + chat_data['quality'] + '&' + chat_data['stars']
-    return res
-
 
 
 

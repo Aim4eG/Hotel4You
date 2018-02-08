@@ -17,7 +17,7 @@ RU_MONTH_VALUES = {
     'нояб': 11,
     'дек': 12
 }
-Ru_Count= {
+RU_COUNT = {
     'пер': 1,
     'вто': 2,
     'тре': 3,
@@ -51,17 +51,20 @@ Ru_Count= {
     'тридцать': 31
 }
 
+
 def month_to_int_value(date_str):
     for ru_month, value in RU_MONTH_VALUES.items():
-        date_str = date_str.replace(ru_month, str(value))
+        date_str = date_str.replace(ru_month, ' ' + str(value))
 
     return date_str + " " + str(datetime.now().year)
 
-def day_to_int_value(date_str):
-    for days, value in Ru_Count.items():
-        date_str = date_str.replace(days, str(value))
 
-    return date_str + " " #+ str(datetime.now().year)
+def day_to_int_value(date_str):
+    for day, value in RU_COUNT.items():
+        date_str = date_str.replace(day, str(value))
+
+    return date_str + " "
+
 
 def delete_all_signs(date_str):
     date_str = date_str.replace(".", " ")
@@ -71,9 +74,11 @@ def delete_all_signs(date_str):
 
     return date_str
 
+
 def clear_let(date_str):
-    b="[a-яА-я]*"
-    return re.sub(b,'',date_str)
+    b = "[a-яА-я]*"
+    return re.sub(b, '', date_str)
+
 
 def parse_date(date_str):
     try:
@@ -81,14 +86,13 @@ def parse_date(date_str):
         date_str = month_to_int_value(date_str.lower())
         date_str = delete_all_signs(date_str)
         date_str = clear_let(date_str)
-        if (len(date_str)<=6):
-            date_str+=str(datetime.now().year)
-        p_date = pandas.to_datetime(date_str)
+        if len(date_str) <= 6:
+            date_str += str(datetime.now().year)
+        p_date = pandas.to_datetime(date_str, dayfirst=True)
         return [str(p_date.day), str(p_date.month), str(p_date.year)]
+
         #print(p_date)
         #print("Day = " + str(p_date.day) + " Month = " + str(p_date.month) + " Year = " + str(p_date.year))
-
-
 
     except ValueError:
         return ['error','0', '0']
