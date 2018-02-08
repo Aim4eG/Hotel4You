@@ -1,5 +1,6 @@
 import xlrd
 import xlwt
+import urllib
 
 def search_city(city):
     rb =xlrd.open_workbook('./cities.xlsx')
@@ -24,6 +25,19 @@ def str_split(str):
         return 'error'
 
 def query(chat_data): #www.booking.com/searchresults.ru.html?<теги для поиска>
+    #par=['city': chat_data['city'],
+     #   '': chat_data['date1']
+
+    #'nflt' = > urlencode($prefersString),
+    #'aid' = > BOOKING_AFFILIATE_ID,
+    #'checkin_monthday' = > $dateIn->format('j'),
+    #'checkin_month' = > $dateIn->format('n'),
+    #'checkin_year' = > $dateIn->format('Y'),
+    #'checkout_monthday' = > $dateOut->format('j'),
+    #'checkout_month' = > $dateOut->format('n'),
+    #'checkout_year' = > $dateOut->format('Y'),
+    #'no_rooms' = > 1,
+    #'group_adults' = > 1 ]
     res = 'www.booking.com/searchresults.ru.html?' + chat_data['city'] + '&' + chat_data['date1'] + \
           '&' + chat_data['date2'] + '&' + chat_data['hotel'] + '&' + chat_data['quality'] + '&' + chat_data['stars']
     return res
