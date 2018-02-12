@@ -56,10 +56,14 @@ def text_message_handler(bot, update, chat_data):
         check_in = get_date.parse_date(res[1])
         check_out = get_date.parse_date(res[2])
 
+
         if check_in[0] == 'error' or check_out[0] == 'error':
             bot.send_message(update.message.chat_id,
                              text='Не смогли распознать дату. Возможно, вы ошиблись в написании запроса. Попробуйте ввести его еще раз;)')
             return
+
+        if (((int(check_in[1]) == 12) and (int(check_out[1]) < 12)) or ((int(check_in[1]) == int(check_out[1])) and (int(check_in[0]) > int(check_out[0])))):
+            check_out[2] = str(int(check_out[2]) + 1)
 
         chat_data['date_in'] = 'checkin_monthday=' + check_in[0] + '&checkin_month=' + check_in[1] + '&checkin_year=' + check_in[2]
         chat_data['date_out'] = 'checkout_monthday=' + check_out[0] + '&checkout_month=' + check_out[1] + '&checkout_year=' + check_out[2]
