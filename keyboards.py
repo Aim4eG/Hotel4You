@@ -14,20 +14,14 @@ YES_NO_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Да', callback_data='t
                                   InlineKeyboardButton('Нет', callback_data='back_to_main')]
                                  ])
 
-TYPE_HOTEL_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Отели', callback_data='th1'),
-                                       InlineKeyboardButton('Минигостиницы', callback_data='th2')],
-                                      [InlineKeyboardButton('Лоджи', callback_data='th3'),
-                                       InlineKeyboardButton('Загородные дома', callback_data='th4')],
-                                      [InlineKeyboardButton('Хостелы', callback_data='th5'),
-                                       InlineKeyboardButton('Апартаменты', callback_data='th6')],
-                                      [InlineKeyboardButton('Гостевые дома', callback_data='th7'),
-                                       InlineKeyboardButton('Ботели', callback_data='th8')],
-                                      [InlineKeyboardButton('Курортные отели', callback_data='th9'),
-                                       InlineKeyboardButton('Дома для отпуска', callback_data='th10')],
-                                      [InlineKeyboardButton('Отели типа R&B', callback_data='th11'),
-                                       InlineKeyboardButton('Не важно', callback_data='th0')],
-                                      [InlineKeyboardButton('Назад', callback_data='back_to_main')]
-                                      ])
+TYPE_HOTEL_KB = InlineKeyboardMarkup([
+                                    [InlineKeyboardButton('Отели, минигостиницы, ботели', callback_data='th1')],
+                                    [InlineKeyboardButton('Гостевые дома, апартаменты, лоджи', callback_data='th2')],
+                                    [InlineKeyboardButton('Хостелы', callback_data='th3'),
+                                    InlineKeyboardButton('Не важно', callback_data='th0')],
+                                    [InlineKeyboardButton('Назад', callback_data='back_to_main')]
+                                    ])
+                        
 
 QUALITY_HOTEL_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Достаточно хорошо: 6+', callback_data='qh60'),
                                           InlineKeyboardButton('Хорошо: 7+', callback_data='qh70')],
