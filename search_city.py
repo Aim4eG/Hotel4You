@@ -31,7 +31,11 @@ def query(chat_data): #www.booking.com/searchresults.ru.html?<теги для п
         res = 'www.booking.com/searchresults.ru.html?' + chat_data['city'] + '&aid=1433748&' + \
               chat_data['date_in'] + '&' + chat_data['date_out'] + '&no_rooms=1&group_adults=2'
         return res
-
+    if chat_data['stars'] == '':
+        res = 'www.booking.com/searchresults.ru.html?' + chat_data['city'] + '&nflt=' + chat_data['hotel'] + \
+              chat_data['quality'] + '&aid=1433748&' + chat_data['date_in'] + '&' + \
+              chat_data['date_out'] + '&no_rooms=1&group_adults=2'
+        return res
     res = 'www.booking.com/searchresults.ru.html?' + chat_data['city'] + '&nflt=' + chat_data['hotel'] + \
           chat_data['quality'] + chat_data['stars'] + '&aid=1433748&' + chat_data['date_in'] + '&' + \
           chat_data['date_out'] + '&no_rooms=1&group_adults=2'
