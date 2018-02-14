@@ -119,6 +119,7 @@ def num_stars(bot, update, chat_data):
                           chat_id=query.message.chat_id,
                           message_id=query.message.message_id)
     else:
+        chat_data['stars'] = ''
         bot.edit_message_text(text='Отлично! Теперь я смогу подобрать для тебя хорошие варианты проживания. Попробуем?',
                               reply_markup=keyboards.GO_TRAVEL_KB,
                               chat_id=query.message.chat_id,
