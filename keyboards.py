@@ -21,7 +21,7 @@ TYPE_HOTEL_KB = InlineKeyboardMarkup([
                                     InlineKeyboardButton('Не важно', callback_data='th0')],
                                     [InlineKeyboardButton('Назад', callback_data='back_to_main')]
                                     ])
-                        
+
 
 QUALITY_HOTEL_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Достаточно хорошо: 6+', callback_data='qh60'),
                                           InlineKeyboardButton('Хорошо: 7+', callback_data='qh70')],

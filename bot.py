@@ -94,7 +94,7 @@ def quality_of_hotel(bot, update, chat_data):
     elif query.data == 'th0':
         chat_data['hotel'] = ''
 
-    bot.edit_message_text(text='Какой рейтинг должен быть у отеля? Выбери один из возможных вариантов ниже:',
+    bot.edit_message_text(text='Какой рейтинг должен быть у варианта размещения? Выбери один из возможных вариантов ниже:',
                           reply_markup=keyboards.QUALITY_HOTEL_KB,
                           chat_id=query.message.chat_id,
                           message_id=query.message.message_id)
@@ -113,11 +113,17 @@ def num_stars(bot, update, chat_data):
         chat_data['quality'] = 'review_score%253D90%253B'
     elif query.data == 'qh0':
         chat_data['quality'] = ''
-
-    bot.edit_message_text(text='А сколько звезд? Выбери один из возможных вариантов ниже:',
+    if(chat_data['hotel']=='ht_id%253D204%253Bht_id%253D218%253Bht_id%253D215%253Bht_id%253D206%253Bht_id%253D208%253B'):
+        bot.edit_message_text(text='А сколько звезд? Выбери один из возможных вариантов ниже:',
                           reply_markup=keyboards.NUM_STARS_KB,
                           chat_id=query.message.chat_id,
                           message_id=query.message.message_id)
+    else:
+        bot.edit_message_text(text='Отлично! Теперь я смогу подобрать для тебя хорошие варианты проживания. Попробуем?',
+                              reply_markup=keyboards.GO_TRAVEL_KB,
+                              chat_id=query.message.chat_id,
+                              message_id=query.message.message_id)
+
 
 
 def save_parameters(bot, update, chat_data):
@@ -188,7 +194,7 @@ if __name__ == '__main__':
 
     dispatcher.add_handler(CallbackQueryHandler(type_of_hotel, pattern='type_of_hotel', pass_chat_data=True))
     dispatcher.add_handler(CallbackQueryHandler(back_to_main, pattern='back_to_main'))
-    dispatcher.add_handler(CallbackQueryHandler(quality_of_hotel, pattern='(th1)|(th2)|(th3)', pass_chat_data=True))
+    dispatcher.add_handler(CallbackQueryHandler(quality_of_hotel, pattern='(th1)|(th2)|(th3)|(th0)', pass_chat_data=True))
     dispatcher.add_handler(CallbackQueryHandler(num_stars, pattern='(qh60)|(qh70)|(qh80)|(qh90)|(qh0)', pass_chat_data=True))
     dispatcher.add_handler(CallbackQueryHandler(save_parameters, pattern='(ns1)|(ns2)|(ns3)|(ns4)|(ns5)|(ns0)', pass_chat_data=True))
     dispatcher.add_handler(CallbackQueryHandler(go_travel, pattern='go_travel', pass_chat_data=True))
