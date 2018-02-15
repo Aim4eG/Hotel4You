@@ -4,11 +4,12 @@ import urllib
 
 
 def search_city(city):
+    city = str(city).lower()
     rb = xlrd.open_workbook('./cities.xlsx')
     sheet = rb.sheet_by_index(0)
     for row_num in range(sheet.nrows):
         row = sheet.row_values(row_num)
-        if str(row[1]).lower() == str(city).lower():
+        if str(row[1]).lower() == сity:
             return row[3]
     return 'error'
 
