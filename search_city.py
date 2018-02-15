@@ -8,7 +8,7 @@ def search_city(city):
     sheet = rb.sheet_by_index(0)
     for row_num in range(sheet.nrows):
         row = sheet.row_values(row_num)
-        if row[1] == city:
+        if str(row[1]).lower() == str(city).lower():
             return row[3]
     return 'error'
 
