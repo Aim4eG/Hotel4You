@@ -52,25 +52,28 @@ def text_message_handler(bot, update, chat_data):
             return
 
         chat_data['city'] = 'city=' + chat_data['city']
-        #num_ind = res[1].isalnum()
-        #if (num_ind != True):
-        check_in = get_date.parse_date(res[1])
-       # else:
-         #   check_in=res[1]
+        num_ind =res[1].isdigit()
+        if (num_ind != True):
+            check_in = get_date.parse_date(res[1])
+            if check_in[0] == 'error':
+               bot.send_message(update.message.chat_id,
+                              text='Не смогли распознать дату. Возможно, вы ошиблись в написании запроса. Попробуйте ввести его еще раз;)')
+               return
+
         check_out = get_date.parse_date(res[2])
 
 
-        if check_in[0] == 'error' or check_out[0] == 'error':
+        if check_out[0] == 'error':
             bot.send_message(update.message.chat_id,
                              text='Не смогли распознать дату. Возможно, вы ошиблись в написании запроса. Попробуйте ввести его еще раз;)')
             return
-
-        if (((int(check_in[1]) == 12) and (int(check_out[1]) < 12)) or ((int(check_in[1]) == int(check_out[1])) and (int(check_in[0]) > int(check_out[0])))):
-            check_out[2] = str(int(check_out[2]) + 1)
-       # if (num_ind != True):
-        chat_data['date_in'] = 'checkin_monthday=' + check_in[0] + '&checkin_month=' + check_in[1] + '&checkin_year=' + check_in[2]
-        #else:
-          #  chat_data['data_in'] = 'checkin_monthday=' + check_in + '&checkin_month=' + check_out[1] + '&checkin_year=' + check_out[2]
+        if (num_ind != True):
+            if (((int(check_in[1]) == 12) and (int(check_out[1]) < 12)) or ((int(check_in[1]) == int(check_out[1])) and (int(check_in[0]) > int(check_out[0])))):
+                check_out[2] = str(int(check_out[2]) + 1)
+        if (num_ind != True):
+           chat_data['date_in'] = 'checkin_monthday=' + check_in[0] + '&checkin_month=' + check_in[1] + '&checkin_year=' + check_in[2]
+        else:
+           chat_data['date_in'] = 'checkin_monthday=' + res[1] + '&checkin_month=' + check_out[1] + '&checkin_year=' + check_out[2]
         chat_data['date_out'] = 'checkout_monthday=' + check_out[0] + '&checkout_month=' + check_out[1] + '&checkout_year=' + check_out[2]
 
         ref = search_city.query(chat_data)

@@ -91,8 +91,13 @@ def parse_date(date_str):
         p_date = pandas.to_datetime(date_str, dayfirst=True)
         return [str(p_date.day), str(p_date.month), str(p_date.year)]
 
-        #print(p_date)
-        #print("Day = " + str(p_date.day) + " Month = " + str(p_date.month) + " Year = " + str(p_date.year))
+
+
 
     except ValueError:
         return ['error','0', '0']
+
+
+
+
+
