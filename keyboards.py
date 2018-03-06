@@ -43,3 +43,39 @@ NUM_STARS_KB = InlineKeyboardMarkup([[InlineKeyboardButton('1 звезда', cal
 GO_TRAVEL_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Да', callback_data='go_travel'),
                                       InlineKeyboardButton('Нет', callback_data='back_to_main')]
                                      ])
+
+CHILD_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Да', callback_data='amount_children'),
+                                      InlineKeyboardButton('Нет', callback_data='add_params')]
+                                ])
+
+ADD_PARAMETERS_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Хочу', callback_data='add_params'),
+                                      InlineKeyboardButton('Не хочу', callback_data='go_travel')]
+                                     ])
+
+RECEPTION_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Да', callback_data='yes_reception'),
+                                      InlineKeyboardButton('Нет', callback_data='no_reception')]
+                                     ])
+
+BREAKFAST_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Да', callback_data='yes_breakfast'),
+                                      InlineKeyboardButton('Нет', callback_data='no_breakfast')]
+                                     ])
+
+WIFI_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Да', callback_data='yes_wifi'),
+                                      InlineKeyboardButton('Нет', callback_data='no_wifi')]
+                                ])
+
+PARKING_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Да', callback_data='yes_parking'),
+                                      InlineKeyboardButton('Нет', callback_data='no_parking')]
+                                     ])
+
+POOL_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Да', callback_data='yes_pool'),
+                                      InlineKeyboardButton('Нет', callback_data='no_pool')]
+                                     ])
+
+DISABLED_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Да', callback_data='yes_disabled'),
+                                      InlineKeyboardButton('Нет', callback_data='no_disabled')]
+                                     ])
+
+PETS_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Да', callback_data='yes_pets'),
+                                      InlineKeyboardButton('Нет', callback_data='go_travel')]
+                                     ])
