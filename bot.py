@@ -16,13 +16,16 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 def start_greeting(bot, update, chat_data):
     chat_data.clear()
-    update.message.reply_text('Привет! Я помогу тебе быстро подобрать отличный отель с помощью сервиса booking.com.', reply_markup=keyboards.REMOVE_KB)
+    update.message.reply_text('Привет! Я помогу тебе быстро подобрать отличный отель с помощью сервиса booking.com.',
+                              reply_markup=keyboards.REMOVE_KB)
     update.message.reply_text('Если ты готов - просто напиши мне любое сообщение')
 
     chat_data['message_type'] = 'start_description'
 
 
 def text_message_handler(bot, update, chat_data):
+    query = update.callback_query
+
     if chat_data['message_type'] == 'start_description':
         bot.send_message(update.message.chat_id,
                          text='Рад твоему сообщению! \n'
@@ -35,34 +38,37 @@ def text_message_handler(bot, update, chat_data):
         return
 
     elif chat_data['message_type'] == 'amount_adults':
-        if (int(update.message.text) > 30 and int(update.message.text) < 1):
+        if int(update.message.text) > 30 and int(update.message.text) < 1:
             bot.send_message(update.message.chat_id,
                              text='Количество указано некорректно! Ввведи количество взрослых еще раз')
             return
+
         chat_data['group_adults'] = 'group_adults=' + update.message.text
         bot.send_message(update.message.chat_id,
                          text='Укажите количество номеров (не больше, чем количество взрослых!)')
-        chat_data['message_type'] == 'no_rooms'
+        chat_data['message_type'] = 'no_rooms'
 
     elif chat_data['message_type'] == 'no_rooms':
-        if (int(update.message.text) > 30 and int(update.message.text) < 1):
+        if int(update.message.text) > 30 and int(update.message.text) < 1:
             bot.send_message(update.message.chat_id,
                              text='Количество номеров указано некорректно! Ввведи число еще раз')
             return
+
         chat_data['no_rooms'] = 'no_rooms=' + update.message.text
         bot.send_message(update.message.chat_id,
                          text='Будут ли с тобой дети?',
-                         reply_markup=keyboards.CHILD_KB)
+                         reply_markup=keyboards.CHILD_KB,
+                         chat_id=query.message.chat_id,
+                         message_id=query.message.message_id)
 
     elif chat_data['message_type'] == 'amount_children':
-        if (int(update.message.text) > 10 and int(update.message.text) < 1):
+        if int(update.message.text) > 10 and int(update.message.text) < 1:
             bot.send_message(update.message.chat_id,
                              text='Количество указано некорректно! Ввведи количество детей еще раз')
             return
+
         chat_data['group_children'] = 'group_children=' + update.message.text
-
-
-
+        add_params(bot=bot, update=update, chat_data=chat_data)
 
     elif chat_data['message_type'] == 'go_travel':
         bot.send_message(update.message.chat_id,
@@ -110,8 +116,6 @@ def text_message_handler(bot, update, chat_data):
         chat_data['message_type'] = 'go_travel'
 
 
-
-
 def type_of_hotel(bot, update, chat_data):
     query = update.callback_query
 
@@ -153,7 +157,7 @@ def num_stars(bot, update, chat_data):
     elif query.data == 'qh0':
         chat_data['quality'] = ''
 
-    if (chat_data['hotel'] == 'ht_id%253D204%253Bht_id%253D218%253Bht_id%253D215%253Bht_id%253D206%253Bht_id%253D208%253B'):
+    if chat_data['hotel'] == 'ht_id%253D204%253Bht_id%253D218%253Bht_id%253D215%253Bht_id%253D206%253Bht_id%253D208%253B':
         bot.edit_message_text(text='А сколько звезд? Выбери один из возможных вариантов ниже:',
                           reply_markup=keyboards.NUM_STARS_KB,
                           chat_id=query.message.chat_id,
@@ -166,8 +170,7 @@ def num_stars(bot, update, chat_data):
         chat_data['message_type'] = 'amount_adults'
 
 
-
-def save_parameters(bot, update, chat_data):
+def amount_adults(bot, update, chat_data):
     query = update.callback_query
 
     if query.data == 'ns1':
@@ -188,7 +191,10 @@ def save_parameters(bot, update, chat_data):
                           message_id=query.message.message_id)
     chat_data['message_type'] = 'amount_adults'
 
+
 def amount_children(bot, update, chat_data):
+    query = update.callback_query
+
     bot.edit_message_text(text='Укажите количество детей(от 1 до 10)',
                           chat_id=query.message.chat_id,
                           message_id=query.message.message_id)
@@ -196,71 +202,120 @@ def amount_children(bot, update, chat_data):
 
 
 def add_params(bot, update, chat_data):
+    query = update.callback_query
+
     bot.send_message(update.message.chat_id,
                      text='Хочешь ввести дополнительные параметры? Например, наличие бесплатного wi-fi, парковки или бассейна.',
-                     reply_markup=keyboards.ADD_PARAMETERS_KB)
+                     reply_markup=keyboards.ADD_PARAMETERS_KB,
+                     chat_id=query.message.chat_id,
+                     message_id=query.message.message_id)
+
 
 def reception(bot, update, chat_data):
-    bot.send_message(update.message.chat_id,
-                     text='Важно ли, чтобы стойка регистрации работала круглосуточно?',
-                     reply_markup=keyboards.RECEPTION_KB)
+    query = update.callback_query
+
+    bot.edit_message_text(update.message.chat_id,
+                          text='Важно ли, чтобы стойка регистрации работала круглосуточно?',
+                          reply_markup=keyboards.RECEPTION_KB,
+                          chat_id=query.message.chat_id,
+                          message_id=query.message.message_id)
+
 
 def add_breakfast(bot, update, chat_data):
     query = update.callback_query
-    if (query.data == 'yes_reception'):
-        chat_data['reception']='hr_24%3D8%3B&lsf=hr_24'
-    bot.send_message(update.message.chat_id,
-                     text='Завтрак должен быть включен в проживание?',
-                     reply_markup=keyboards.BREAKFAST_KB)
+
+    if query.data == 'yes_reception':
+        chat_data['reception'] = 'hr_24%3D8%3B&lsf=hr_24'
+
+    bot.edit_message_text(update.message.chat_id,
+                          text='Завтрак должен быть включен в проживание?',
+                          reply_markup=keyboards.BREAKFAST_KB,
+                          chat_id=query.message.chat_id,
+                          message_id=query.message.message_id)
+
 
 def add_wifi(bot, update, chat_data):
     query = update.callback_query
-    if (query.data == 'yes_breakfast'):
-        chat_data['breakfast']='mealplan%3D1%3B'
-    bot.send_message(update.message.chat_id,
-                     text='Важно ли наличие бесплатного wi-fi?',
-                     reply_markup=keyboards.WIFI_KB)
+
+    if query.data == 'yes_breakfast':
+        chat_data['breakfast'] = 'mealplan%3D1%3B'
+
+    bot.edit_message_text(update.message.chat_id,
+                          text='Важно ли наличие бесплатного wi-fi?',
+                          reply_markup=keyboards.WIFI_KB,
+                          chat_id=query.message.chat_id,
+                          message_id=query.message.message_id)
+
 
 def add_parking(bot, update, chat_data):
     query = update.callback_query
-    if (query.data == 'yes_wifi'):
-        chat_data['wifi']='hotelfacility%3D107%3B'
-    bot.send_message(update.message.chat_id,
-                     text='Нужна ли парковка?',
-                     reply_markup=keyboards.PARKING_KB)
+
+    if query.data == 'yes_wifi':
+        chat_data['wifi'] = 'hotelfacility%3D107%3B'
+
+    bot.edit_message_text(update.message.chat_id,
+                          text='Нужна ли парковка?',
+                          reply_markup=keyboards.PARKING_KB,
+                          chat_id=query.message.chat_id,
+                          message_id=query.message.message_id)
+
 
 def add_pool(bot, update, chat_data):
     query = update.callback_query
-    if (query.data == 'yes_parking'):
+
+    if query.data == 'yes_parking':
         chat_data['parking'] = 'hotelfacility%3D2%3B'
-    bot.send_message(update.message.chat_id,
-                     text='Нужен ли бассейн?',
-                     reply_markup=keyboards.POOL_KB)
+
+    bot.edit_message_text(update.message.chat_id,
+                          text='Нужен ли бассейн?',
+                          reply_markup=keyboards.POOL_KB,
+                          chat_id=query.message.chat_id,
+                          message_id=query.message.message_id)
+
 
 def add_disabled(bot, update, chat_data):
     query = update.callback_query
-    if (query.data == 'yes_pool'):
+
+    if query.data == 'yes_pool':
         chat_data['pool'] = 'hotelfacility%3D301%3B'
-    bot.send_message(update.message.chat_id,
-                     text='Необходимы ли удобства для гостей с ограниченными физическими возможностями?',
-                     reply_markup=keyboards.DISABLED_KB)
+
+    bot.edit_message_text(update.message.chat_id,
+                          text='Необходимы ли удобства для гостей с ограниченными физическими возможностями?',
+                          reply_markup=keyboards.DISABLED_KB,
+                          chat_id=query.message.chat_id,
+                          message_id=query.message.message_id)
+
 
 def add_pets(bot, update, chat_data):
     query = update.callback_query
-    if (query.data == 'yes_disabled'):
+
+    if query.data == 'yes_disabled':
         chat_data['disabled'] = 'hotelfacility=25%3B'
-    bot.send_message(update.message.chat_id,
-                     text='Допускается ли размещение домашних животных?',
-                     reply_markup=keyboards.PETS_KB)
+
+    bot.edit_message_text(update.message.chat_id,
+                          text='Допускается ли размещение домашних животных?',
+                          reply_markup=keyboards.PETS_KB,
+                          chat_id=query.message.chat_id,
+                          message_id=query.message.message_id)
+
 
 def save_add_params(bot, update, chat_data):
-    bot.send_message(update.message.chat_id,
-                     text='Отлично! Теперь я смогу подобрать для тебя хорошие варианты проживания. Попробуем?',
-                     reply_markup=keyboards.GO_TRAVEL_KB)
+    query = update.callback_query
+
+    if query.data == 'yes_pets':
+        chat_data['pets'] = 'hotelfacility%3D4%3B'
+
+    bot.edit_message_text(update.message.chat_id,
+                          text='Отлично! Теперь я смогу подобрать для тебя хорошие варианты проживания. Попробуем?',
+                          reply_markup=keyboards.GO_TRAVEL_KB,
+                          chat_id=query.message.chat_id,
+                          message_id=query.message.message_id)
+
 
 def go_travel(bot, update, chat_data):
     query = update.callback_query
-    if (query.data == 'yes_pets'):
+
+    if query.data == 'yes_pets':
         chat_data['pets'] = 'hotelfacility%3D4%3B'
 
     bot.edit_message_text(text='Отлично! Куда и когда ты собираешься в следующий раз? Напиши мне город и дату.\n'
@@ -306,16 +361,16 @@ if __name__ == '__main__':
     dispatcher.add_handler(CallbackQueryHandler(back_to_main, pattern='back_to_main'))
     dispatcher.add_handler(CallbackQueryHandler(quality_of_hotel, pattern='(th1)|(th2)|(th3)|(th0)', pass_chat_data=True))
     dispatcher.add_handler(CallbackQueryHandler(num_stars, pattern='(qh60)|(qh70)|(qh80)|(qh90)|(qh0)', pass_chat_data=True))
-    dispatcher.add_handler(CallbackQueryHandler(save_parameters, pattern='(ns1)|(ns2)|(ns3)|(ns4)|(ns5)|(ns0)', pass_chat_data=True))
-    dispatcher.add_handler(CallbackQueryHandler(add_params, pattern='(add params)|(go travel)', pass_chat_data=True))
-    dispatcher.add_handler(CallbackQueryHandler(reception, pattern='(yes_reception)|(no_reception)', pass_chat_data=True))
-    dispatcher.add_handler(CallbackQueryHandler(add_breakfast, pattern='(yes_breakfast)|(no_breakfast)', pass_chat_data=True))
-    dispatcher.add_handler(CallbackQueryHandler(add_wifi, pattern='(yes_wifi)|(no_wifi)', pass_chat_data=True))
-    dispatcher.add_handler(CallbackQueryHandler(add_parking, pattern='(yes_parking)|(no_parking)', pass_chat_data=True))
-    dispatcher.add_handler(CallbackQueryHandler(add_pool, pattern='(yes_pool)|(no_pool)', pass_chat_data=True))
-    dispatcher.add_handler(CallbackQueryHandler(add_disabled, pattern='(yes_disabled)|(no_disabled)', pass_chat_data=True))
-    dispatcher.add_handler(CallbackQueryHandler(add_pets, pattern='(yes_pets)|(no_pets)', pass_chat_data=True))
-    dispatcher.add_handler(CallbackQueryHandler(save_add_params, pattern='(go_travel)|(back_to_main)', pass_chat_data=True))
+    dispatcher.add_handler(CallbackQueryHandler(amount_adults, pattern='(ns1)|(ns2)|(ns3)|(ns4)|(ns5)|(ns0)', pass_chat_data=True))
+    dispatcher.add_handler(CallbackQueryHandler(add_params, pattern='add_params', pass_chat_data=True))
+    dispatcher.add_handler(CallbackQueryHandler(reception, pattern='yes_add_params', pass_chat_data=True))
+    dispatcher.add_handler(CallbackQueryHandler(add_breakfast, pattern='(yes_reception)|(no_reception)', pass_chat_data=True))
+    dispatcher.add_handler(CallbackQueryHandler(add_wifi, pattern='(yes_breakfast)|(no_breakfast)', pass_chat_data=True))
+    dispatcher.add_handler(CallbackQueryHandler(add_parking, pattern='(yes_wifi)|(no_wifi)', pass_chat_data=True))
+    dispatcher.add_handler(CallbackQueryHandler(add_pool, pattern='(yes_parking)|(no_parking)', pass_chat_data=True))
+    dispatcher.add_handler(CallbackQueryHandler(add_disabled, pattern='(yes_pool)|(no_pool)', pass_chat_data=True))
+    dispatcher.add_handler(CallbackQueryHandler(add_pets, pattern='(yes_disabled)|(no_disabled)', pass_chat_data=True))
+    dispatcher.add_handler(CallbackQueryHandler(save_add_params, pattern='yes_pets', pass_chat_data=True))
     dispatcher.add_handler(CallbackQueryHandler(go_travel, pattern='go_travel', pass_chat_data=True))
 
     updater.start_polling()

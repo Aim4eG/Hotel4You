@@ -48,7 +48,7 @@ CHILD_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Да', callback_data='am
                                       InlineKeyboardButton('Нет', callback_data='add_params')]
                                 ])
 
-ADD_PARAMETERS_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Хочу', callback_data='add_params'),
+ADD_PARAMETERS_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Хочу', callback_data='yes_add_params'),
                                       InlineKeyboardButton('Не хочу', callback_data='go_travel')]
                                      ])
 
