@@ -13,7 +13,6 @@ import search_city
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
 
-
 def start_greeting(bot, update, chat_data):
     chat_data.clear()
     update.message.reply_text('Привет! Я помогу тебе быстро подобрать отличный отель с помощью сервиса booking.com.',
@@ -94,11 +93,6 @@ def text_message_handler(bot, update, chat_data):
                              text='Не можем распознать твой запрос. Попробуй еще раз. Например, Рим 18 марта')
             return
 
-        #if res == 'error':
-            #bot.send_message(update.message.chat_id,
-                             #text='Возможно, вы ошиблись в написании запроса. Попробуйте ввести его еще раз;)')
-            #return
-
         chat_data['city'] = search_city.search_city(res[0])
 
         if chat_data['city'] == 'error':
@@ -108,8 +102,7 @@ def text_message_handler(bot, update, chat_data):
             return
 
         chat_data['city'] = 'city=' + chat_data['city']
-        #num_ind =res[1].isdigit()
-        #if (num_ind != True):
+
         check_in = get_date.parse_date(res[1])
         if check_in[0] == 'error':
             bot.send_message(update.message.chat_id,
@@ -130,7 +123,10 @@ def text_message_handler(bot, update, chat_data):
                                str(travel_dates[2])
         chat_data['date_out'] = 'checkout_monthday=' + str(travel_dates[3]) + '&checkout_month=' + str(travel_dates[4]) + '&checkout_year=' + \
                                 str(travel_dates[5])
-        ref = search_city.query(chat_data)
+        ref = 'www.booking.com/searchresults.ru.html?' + chat_data['city'] + '&' + chat_data['date_in'] + '&' + \
+          chat_data['date_out'] + '&aid=1433748&' + chat_data['no_rooms'] + '&' + chat_data['group_adults'] + '&' + chat_data['group_children'] + \
+              '&nflt=' + chat_data['hotel'] + chat_data['quality'] + chat_data['stars'] + chat_data['breakfast'] + \
+              chat_data['wifi'] + chat_data['parking'] + chat_data['pool'] + chat_data['disabled'] + chat_data['pets'] + chat_data['reception']
         bot.send_message(update.message.chat_id,
                          text='Готово! Пройди по ссылке с подходящими вариантами: \n' + ref)
         chat_data['message_type'] = 'go_travel'
@@ -242,6 +238,8 @@ def add_breakfast(bot, update, chat_data):
 
     if query.data == 'yes_reception':
         chat_data['reception'] = 'hr_24%3D8%3B&lsf=hr_24'
+    elif query.data == 'no_reception':
+        chat_data['reception'] = ''
 
     bot.edit_message_text(text='Завтрак должен быть включен в проживание?',
                           reply_markup=keyboards.BREAKFAST_KB,
@@ -254,6 +252,8 @@ def add_wifi(bot, update, chat_data):
 
     if query.data == 'yes_breakfast':
         chat_data['breakfast'] = 'mealplan%3D1%3B'
+    elif query.data == 'no_breakfast':
+        chat_data['breakfast'] = ''
 
     bot.edit_message_text(text='Важно ли наличие бесплатного wi-fi?',
                           reply_markup=keyboards.WIFI_KB,
@@ -266,6 +266,8 @@ def add_parking(bot, update, chat_data):
 
     if query.data == 'yes_wifi':
         chat_data['wifi'] = 'hotelfacility%3D107%3B'
+    elif query.data == 'no_wifi':
+        chat_data['wifi'] = ''
 
     bot.edit_message_text(text='Нужна ли парковка?',
                           reply_markup=keyboards.PARKING_KB,
@@ -278,6 +280,8 @@ def add_pool(bot, update, chat_data):
 
     if query.data == 'yes_parking':
         chat_data['parking'] = 'hotelfacility%3D2%3B'
+    elif query.data == 'no_parking':
+        chat_data['parking'] = ''
 
     bot.edit_message_text(text='Нужен ли бассейн?',
                           reply_markup=keyboards.POOL_KB,
@@ -290,6 +294,8 @@ def add_disabled(bot, update, chat_data):
 
     if query.data == 'yes_pool':
         chat_data['pool'] = 'hotelfacility%3D301%3B'
+    elif query.data == 'no_pool':
+        chat_data['pool'] = ''
 
     bot.edit_message_text(text='Необходимы ли удобства для гостей с ограниченными физическими возможностями?',
                           reply_markup=keyboards.DISABLED_KB,
@@ -302,6 +308,8 @@ def add_pets(bot, update, chat_data):
 
     if query.data == 'yes_disabled':
         chat_data['disabled'] = 'hotelfacility=25%3B'
+    elif query.data == 'no_disabled':
+        chat_data['disabled'] = ''
 
     bot.edit_message_text(text='Допускается ли размещение домашних животных?',
                           reply_markup=keyboards.PETS_KB,
@@ -314,6 +322,8 @@ def save_add_params(bot, update, chat_data):
 
     if query.data == 'yes_pets':
         chat_data['pets'] = 'hotelfacility%3D4%3B'
+    elif query.data == 'no_pets':
+        chat_data['pets'] = ''
 
     bot.edit_message_text(text='Отлично! Теперь я смогу подобрать для тебя хорошие варианты проживания. Попробуем?',
                           reply_markup=keyboards.GO_TRAVEL_KB,
@@ -323,9 +333,6 @@ def save_add_params(bot, update, chat_data):
 
 def go_travel(bot, update, chat_data):
     query = update.callback_query
-
-    if query.data == 'yes_pets':
-        chat_data['pets'] = 'hotelfacility%3D4%3B'
 
     bot.edit_message_text(text='Отлично! Куда и когда ты собираешься в следующий раз? Напиши мне город и дату.\n'
                           'Например: Рим 18 марта, \n'
