@@ -92,6 +92,7 @@ def text_message_handler(bot, update, chat_data):
         if res[0] == 'error':
             bot.send_message(update.message.chat_id,
                              text='Не можем распознать твой запрос. Попробуй еще раз. Например, Рим 18 марта')
+            return
 
         #if res == 'error':
             #bot.send_message(update.message.chat_id,
