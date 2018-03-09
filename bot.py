@@ -24,8 +24,6 @@ def start_greeting(bot, update, chat_data):
 
 
 def text_message_handler(bot, update, chat_data):
-    query = update.callback_query
-
     if chat_data['message_type'] == 'start_description':
         bot.send_message(update.message.chat_id,
                          text='Рад твоему сообщению! \n'
@@ -38,43 +36,62 @@ def text_message_handler(bot, update, chat_data):
         return
 
     elif chat_data['message_type'] == 'amount_adults':
-        if int(update.message.text) > 30 and int(update.message.text) < 1:
+        try:
+            if int(update.message.text) > 30 or int(update.message.text) < 1:
+                bot.send_message(update.message.chat_id,
+                                 text='Количество указано некорректно! Ввведи количество взрослых еще раз')
+                return
+        except ValueError:
             bot.send_message(update.message.chat_id,
                              text='Количество указано некорректно! Ввведи количество взрослых еще раз')
             return
 
         chat_data['group_adults'] = 'group_adults=' + update.message.text
+
         bot.send_message(update.message.chat_id,
                          text='Укажите количество номеров (не больше, чем количество взрослых!)')
         chat_data['message_type'] = 'no_rooms'
 
     elif chat_data['message_type'] == 'no_rooms':
-        if int(update.message.text) > 30 and int(update.message.text) < 1:
+        try:
+            if int(update.message.text) > 30 or int(update.message.text) < 1:
+                bot.send_message(update.message.chat_id,
+                                 text='Количество номеров указано некорректно! Ввведи число еще раз')
+                return
+        except ValueError:
             bot.send_message(update.message.chat_id,
                              text='Количество номеров указано некорректно! Ввведи число еще раз')
             return
 
         chat_data['no_rooms'] = 'no_rooms=' + update.message.text
+
         bot.send_message(update.message.chat_id,
-                         text='Будут ли с тобой дети?',
-                         reply_markup=keyboards.CHILD_KB,
-                         chat_id=query.message.chat_id,
-                         message_id=query.message.message_id)
+                         text='Будут ли с тобой дети? Укажи количество (от 1 до 10) или 0, если их не будет')
+        chat_data['message_type'] = 'amount_children'
 
     elif chat_data['message_type'] == 'amount_children':
-        if int(update.message.text) > 10 and int(update.message.text) < 1:
+        try:
+            if int(update.message.text) > 10 or int(update.message.text) < 0:
+                bot.send_message(update.message.chat_id,
+                                 text='Количество указано некорректно! Ввведи количество детей еще раз')
+                return
+        except ValueError:
             bot.send_message(update.message.chat_id,
                              text='Количество указано некорректно! Ввведи количество детей еще раз')
             return
 
         chat_data['group_children'] = 'group_children=' + update.message.text
-        add_params(bot=bot, update=update, chat_data=chat_data)
+        add_params(bot, update, chat_data)
 
     elif chat_data['message_type'] == 'go_travel':
         bot.send_message(update.message.chat_id,
                          text='Ищем город в базе данных и проверяем правильность введенной даты...')
 
         res = parse.str_parse(update.message.text)
+
+        if res[0] == 'error':
+            bot.send_message(update.message.chat_id,
+                             text='Не можем распознать твой запрос. Попробуй еще раз. Например, Рим 18 марта')
 
         #if res == 'error':
             #bot.send_message(update.message.chat_id,
@@ -85,7 +102,8 @@ def text_message_handler(bot, update, chat_data):
 
         if chat_data['city'] == 'error':
             bot.send_message(update.message.chat_id,
-                             text='Город не найден. Возможно, вы ошиблись в названии. Попробуйте ввести его еще раз;)')
+                             text='Город не найден или ошибка в написании запроса. Возможно, вы ошиблись в названии. '
+                                  'Попробуй ввести его еще раз;)')
             return
 
         chat_data['city'] = 'city=' + chat_data['city']
@@ -94,7 +112,8 @@ def text_message_handler(bot, update, chat_data):
         check_in = get_date.parse_date(res[1])
         if check_in[0] == 'error':
             bot.send_message(update.message.chat_id,
-                            text='Не смогли распознать дату. Возможно, вы ошиблись в написании запроса. Попробуйте ввести его еще раз;)')
+                            text='Не смогли распознать дату или ошибка в написании запроса. Возможно, вы ошиблись в '
+                                 'написании запроса. Попробуйте ввести его еще раз;)')
             return
 
         chat_data['date_in'] = check_in[2] + '-' + check_in[1] + '-' + check_in[0]
@@ -192,30 +211,26 @@ def amount_adults(bot, update, chat_data):
     chat_data['message_type'] = 'amount_adults'
 
 
-def amount_children(bot, update, chat_data):
-    query = update.callback_query
+#def amount_children(bot, update, chat_data):
+#    query = update.callback_query
 
-    bot.edit_message_text(text='Укажите количество детей(от 1 до 10)',
-                          chat_id=query.message.chat_id,
-                          message_id=query.message.message_id)
-    chat_data['message_type'] = 'amount_children'
+#    bot.edit_message_text(text='Укажите количество детей(от 1 до 10)',
+#                          chat_id=query.message.chat_id,
+#                          message_id=query.message.message_id)
+#    chat_data['message_type'] = 'amount_children'
 
 
 def add_params(bot, update, chat_data):
-    query = update.callback_query
-
-    bot.send_message(update.message.chat_id,
-                     text='Хочешь ввести дополнительные параметры? Например, наличие бесплатного wi-fi, парковки или бассейна.',
+    bot.send_message(text='Хочешь ввести дополнительные параметры? Например, наличие бесплатного wi-fi, парковки или бассейна.',
                      reply_markup=keyboards.ADD_PARAMETERS_KB,
-                     chat_id=query.message.chat_id,
-                     message_id=query.message.message_id)
+                     chat_id=update.message.chat_id,
+                     message_id=update.message.message_id)
 
 
 def reception(bot, update, chat_data):
     query = update.callback_query
 
-    bot.edit_message_text(update.message.chat_id,
-                          text='Важно ли, чтобы стойка регистрации работала круглосуточно?',
+    bot.edit_message_text(text='Важно ли, чтобы стойка регистрации работала круглосуточно?',
                           reply_markup=keyboards.RECEPTION_KB,
                           chat_id=query.message.chat_id,
                           message_id=query.message.message_id)
@@ -227,8 +242,7 @@ def add_breakfast(bot, update, chat_data):
     if query.data == 'yes_reception':
         chat_data['reception'] = 'hr_24%3D8%3B&lsf=hr_24'
 
-    bot.edit_message_text(update.message.chat_id,
-                          text='Завтрак должен быть включен в проживание?',
+    bot.edit_message_text(text='Завтрак должен быть включен в проживание?',
                           reply_markup=keyboards.BREAKFAST_KB,
                           chat_id=query.message.chat_id,
                           message_id=query.message.message_id)
@@ -240,8 +254,7 @@ def add_wifi(bot, update, chat_data):
     if query.data == 'yes_breakfast':
         chat_data['breakfast'] = 'mealplan%3D1%3B'
 
-    bot.edit_message_text(update.message.chat_id,
-                          text='Важно ли наличие бесплатного wi-fi?',
+    bot.edit_message_text(text='Важно ли наличие бесплатного wi-fi?',
                           reply_markup=keyboards.WIFI_KB,
                           chat_id=query.message.chat_id,
                           message_id=query.message.message_id)
@@ -253,8 +266,7 @@ def add_parking(bot, update, chat_data):
     if query.data == 'yes_wifi':
         chat_data['wifi'] = 'hotelfacility%3D107%3B'
 
-    bot.edit_message_text(update.message.chat_id,
-                          text='Нужна ли парковка?',
+    bot.edit_message_text(text='Нужна ли парковка?',
                           reply_markup=keyboards.PARKING_KB,
                           chat_id=query.message.chat_id,
                           message_id=query.message.message_id)
@@ -266,8 +278,7 @@ def add_pool(bot, update, chat_data):
     if query.data == 'yes_parking':
         chat_data['parking'] = 'hotelfacility%3D2%3B'
 
-    bot.edit_message_text(update.message.chat_id,
-                          text='Нужен ли бассейн?',
+    bot.edit_message_text(text='Нужен ли бассейн?',
                           reply_markup=keyboards.POOL_KB,
                           chat_id=query.message.chat_id,
                           message_id=query.message.message_id)
@@ -279,8 +290,7 @@ def add_disabled(bot, update, chat_data):
     if query.data == 'yes_pool':
         chat_data['pool'] = 'hotelfacility%3D301%3B'
 
-    bot.edit_message_text(update.message.chat_id,
-                          text='Необходимы ли удобства для гостей с ограниченными физическими возможностями?',
+    bot.edit_message_text(text='Необходимы ли удобства для гостей с ограниченными физическими возможностями?',
                           reply_markup=keyboards.DISABLED_KB,
                           chat_id=query.message.chat_id,
                           message_id=query.message.message_id)
@@ -292,8 +302,7 @@ def add_pets(bot, update, chat_data):
     if query.data == 'yes_disabled':
         chat_data['disabled'] = 'hotelfacility=25%3B'
 
-    bot.edit_message_text(update.message.chat_id,
-                          text='Допускается ли размещение домашних животных?',
+    bot.edit_message_text(text='Допускается ли размещение домашних животных?',
                           reply_markup=keyboards.PETS_KB,
                           chat_id=query.message.chat_id,
                           message_id=query.message.message_id)
@@ -305,8 +314,7 @@ def save_add_params(bot, update, chat_data):
     if query.data == 'yes_pets':
         chat_data['pets'] = 'hotelfacility%3D4%3B'
 
-    bot.edit_message_text(update.message.chat_id,
-                          text='Отлично! Теперь я смогу подобрать для тебя хорошие варианты проживания. Попробуем?',
+    bot.edit_message_text(text='Отлично! Теперь я смогу подобрать для тебя хорошие варианты проживания. Попробуем?',
                           reply_markup=keyboards.GO_TRAVEL_KB,
                           chat_id=query.message.chat_id,
                           message_id=query.message.message_id)
