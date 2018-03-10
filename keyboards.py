@@ -18,7 +18,7 @@ TYPE_HOTEL_KB = InlineKeyboardMarkup([
                                     [InlineKeyboardButton('Отели, минигостиницы, ботели', callback_data='th1')],
                                     [InlineKeyboardButton('Гостевые дома, апартаменты, лоджи', callback_data='th2')],
                                     [InlineKeyboardButton('Хостелы', callback_data='th3'),
-                                    InlineKeyboardButton('Не важно', callback_data='th0')],
+                                     InlineKeyboardButton('Не важно', callback_data='th0')],
                                     [InlineKeyboardButton('Назад', callback_data='back_to_main')]
                                     ])
 
@@ -45,12 +45,12 @@ GO_TRAVEL_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Да', callback_data
                                      ])
 
 CHILD_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Да', callback_data='amount_children'),
-                                      InlineKeyboardButton('Нет', callback_data='add_params')]
-                                ])
+                                  InlineKeyboardButton('Нет', callback_data='add_params')]
+                                 ])
 
 ADD_PARAMETERS_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Хочу', callback_data='yes_add_params'),
-                                      InlineKeyboardButton('Не хочу', callback_data='go_travel')]
-                                     ])
+                                           InlineKeyboardButton('Не хочу', callback_data='go_travel_no_add_params')]
+                                          ])
 
 RECEPTION_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Да', callback_data='yes_reception'),
                                       InlineKeyboardButton('Нет', callback_data='no_reception')]
@@ -61,21 +61,21 @@ BREAKFAST_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Да', callback_data
                                      ])
 
 WIFI_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Да', callback_data='yes_wifi'),
-                                      InlineKeyboardButton('Нет', callback_data='no_wifi')]
+                                 InlineKeyboardButton('Нет', callback_data='no_wifi')]
                                 ])
 
 PARKING_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Да', callback_data='yes_parking'),
-                                      InlineKeyboardButton('Нет', callback_data='no_parking')]
-                                     ])
+                                    InlineKeyboardButton('Нет', callback_data='no_parking')]
+                                   ])
 
 POOL_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Да', callback_data='yes_pool'),
-                                      InlineKeyboardButton('Нет', callback_data='no_pool')]
-                                     ])
+                                 InlineKeyboardButton('Нет', callback_data='no_pool')]
+                                ])
 
 DISABLED_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Да', callback_data='yes_disabled'),
-                                      InlineKeyboardButton('Нет', callback_data='no_disabled')]
-                                     ])
+                                     InlineKeyboardButton('Нет', callback_data='no_disabled')]
+                                    ])
 
 PETS_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Да', callback_data='yes_pets'),
-                                      InlineKeyboardButton('Нет', callback_data='go_travel')]
-                                     ])
+                                 InlineKeyboardButton('Нет', callback_data='no_pets')]
+                                ])

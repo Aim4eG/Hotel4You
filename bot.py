@@ -1,6 +1,5 @@
 import logging
 
-from telegram import Location
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, Filters, MessageHandler, RegexHandler
 
 import config
@@ -113,20 +112,23 @@ def text_message_handler(bot, update, chat_data):
         chat_data['date_in'] = check_in[2] + '-' + check_in[1] + '-' + check_in[0]
 
         bot.send_message(update.message.chat_id,
-                         text='Отлично! А на сколько ночей ты планируешь остановиться?')
+                         text='Отлично! А на сколько ночей ты планируешь остановиться? Напиши количество, например, 7')
 
         chat_data['message_type'] = 'night_amount'
 
     elif chat_data['message_type'] == 'night_amount':
         travel_dates = parse.night_amount(chat_data['date_in'], update.message.text)
-        chat_data['date_in'] = 'checkin_monthday=' + str(travel_dates[0]) + '&checkin_month=' + str(travel_dates[1]) + '&checkin_year=' + \
-                               str(travel_dates[2])
-        chat_data['date_out'] = 'checkout_monthday=' + str(travel_dates[3]) + '&checkout_month=' + str(travel_dates[4]) + '&checkout_year=' + \
-                                str(travel_dates[5])
+        chat_data['date_in'] = 'checkin_monthday=' + str(travel_dates[0]) + '&checkin_month=' + str(travel_dates[1]) + \
+                               '&checkin_year=' + str(travel_dates[2])
+        chat_data['date_out'] = 'checkout_monthday=' + str(travel_dates[3]) + '&checkout_month=' + str(travel_dates[4]) + \
+                                '&checkout_year=' + str(travel_dates[5])
+
         ref = 'www.booking.com/searchresults.ru.html?' + chat_data['city'] + '&' + chat_data['date_in'] + '&' + \
-          chat_data['date_out'] + '&aid=1433748&' + chat_data['no_rooms'] + '&' + chat_data['group_adults'] + '&' + chat_data['group_children'] + \
-              '&nflt=' + chat_data['hotel'] + chat_data['quality'] + chat_data['stars'] + chat_data['breakfast'] + \
-              chat_data['wifi'] + chat_data['parking'] + chat_data['pool'] + chat_data['disabled'] + chat_data['pets'] + chat_data['reception']
+              chat_data['date_out'] + '&aid=1433748&' + chat_data['no_rooms'] + '&' + chat_data['group_adults'] + '&' +\
+              chat_data['group_children'] + '&nflt=' + chat_data['hotel'] + chat_data['quality'] + chat_data['stars'] + \
+              chat_data['breakfast'] + chat_data['wifi'] + chat_data['parking'] + chat_data['pool'] + \
+              chat_data['disabled'] + chat_data['pets'] + chat_data['reception']
+
         bot.send_message(update.message.chat_id,
                          text='Готово! Пройди по ссылке с подходящими вариантами: \n' + ref)
         chat_data['message_type'] = 'go_travel'
@@ -334,6 +336,15 @@ def save_add_params(bot, update, chat_data):
 def go_travel(bot, update, chat_data):
     query = update.callback_query
 
+    if query.data == 'go_travel_no_add_params':
+        chat_data['breakfast'] = ''
+        chat_data['wifi'] = ''
+        chat_data['parking'] = ''
+        chat_data['pool'] = ''
+        chat_data['disabled'] = ''
+        chat_data['pets'] = ''
+        chat_data['reception'] = ''
+
     bot.edit_message_text(text='Отлично! Куда и когда ты собираешься в следующий раз? Напиши мне город и дату.\n'
                           'Например: Рим 18 марта, \n'
                           'Москва 12.06.2018, \n',
@@ -387,7 +398,7 @@ if __name__ == '__main__':
     dispatcher.add_handler(CallbackQueryHandler(add_disabled, pattern='(yes_pool)|(no_pool)', pass_chat_data=True))
     dispatcher.add_handler(CallbackQueryHandler(add_pets, pattern='(yes_disabled)|(no_disabled)', pass_chat_data=True))
     dispatcher.add_handler(CallbackQueryHandler(save_add_params, pattern='yes_pets', pass_chat_data=True))
-    dispatcher.add_handler(CallbackQueryHandler(go_travel, pattern='go_travel', pass_chat_data=True))
+    dispatcher.add_handler(CallbackQueryHandler(go_travel, pattern='(go_travel)|(go_travel_no_add_params)', pass_chat_data=True))
 
     updater.start_polling()
     updater.idle()

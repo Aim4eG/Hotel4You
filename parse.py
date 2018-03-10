@@ -14,7 +14,7 @@ def str_parse(str):
         city_name = Word(all_alphas + ' ') ^ Word(all_alphas + '-' + all_alphas)
         # Дата: обязательно начинается с цифр! За цифрами может идти пробел + слова (16 марта)
         # или совокупность цифр с символами (17/05/2019, 17.05.2019, 17-05-2019, 17,05,2019).
-        date = Word(nums + ' ' + all_alphas) ^ Word(nums + symbols)
+        date = Word(nums + ' ' + all_alphas + symbols) ^ Word(nums + symbols)
 
         parser = city_name + date
 
@@ -40,6 +40,7 @@ def night_amount(date_str, amount):
     #count_days = timedelta(amount)
     date_in = pandas.to_datetime(date_str, dayfirst=True)
     date_out = date_in + timedelta(int(amount))
+
     res = []
     res.append(date_in.day)
     res.append(date_in.month)
@@ -47,8 +48,10 @@ def night_amount(date_str, amount):
     res.append(date_out.day)
     res.append(date_out.month)
     res.append(date_out.year)
+
     return res
-    #print(new_date.day)
+
+#print(new_date.day)
 
 #date = night_amount(3)
 #print(date)
